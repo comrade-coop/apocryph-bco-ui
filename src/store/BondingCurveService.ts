@@ -4,6 +4,7 @@ import {
   BondingCurveAddress,
   BondingCurveAbi,
 } from "@/common/config";
+import { BigNumber } from "ethers";
 
 export enum TradeDirection {
   BUY,
@@ -20,14 +21,14 @@ export interface CalculateResult {
 }
 
 export interface FetchResult {
-  balance: number;
-  buyPrice: number;
-  sellPrice: number;
+  balance: BigNumber;
+  buyPrice: BigNumber;
+  sellPrice: BigNumber;
 }
 
 export interface TradeParams {
   direction: TradeDirection;
-  amount: number;
+  amount: BigNumber;
 }
 
 export class BondingCurveService {
@@ -52,9 +53,9 @@ export class BondingCurveService {
     // GET BUY PRICE
     // GET SELL PRICE
     return {
-      balance: 0,
-      buyPrice: 0,
-      sellPrice: 0,
+      balance: BigNumber.from(0),
+      buyPrice: BigNumber.from(0),
+      sellPrice: BigNumber.from(0)
     };
   }
 

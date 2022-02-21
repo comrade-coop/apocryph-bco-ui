@@ -1,7 +1,9 @@
+import { BigNumber } from "ethers";
+
 export interface BondingCurveState {
-  balance: number;
-  buyPrice: number;
-  sellPrice: number;
+  balance: BigNumber;
+  buyPrice: BigNumber;
+  sellPrice: BigNumber;
   amount: number;
   fetchingData: boolean;
   calculatingAmount: boolean;
@@ -10,9 +12,9 @@ export interface BondingCurveState {
 }
 
 export const InitialState: BondingCurveState = {
-  balance: 0,
-  buyPrice: 0,
-  sellPrice: 0,
+  balance: BigNumber.from(0),
+  buyPrice: BigNumber.from(0),
+  sellPrice: BigNumber.from(0),
   amount: 0,
   fetchingData: false,
   calculatingAmount: false,

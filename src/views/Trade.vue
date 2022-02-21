@@ -8,7 +8,7 @@
         <ul>
           <li>
             <label for="price">Available: </label>
-            1000 CRYPTH
+            {{balance}} CRYPTH
           </li>
         </ul>
       </nav>
@@ -41,40 +41,23 @@
   </section>
   <!-- eslint-disable-next-line -->
   <section>
-    <form>
-		<fieldset>
-			<legend>SELL</legend>
-			<div class="form-group trade-panel">
-				<label for="price">Price: </label> 0 DAI
-			</div>
-			<div class="form-group trade-panel">
-				<label for="amount">Amount:</label>
-				<div>
-					<input type="number" id="amount" name="amount" />
-					<span>CRYPTH</span>
-				</div>
-			</div>
-			<div class="form-group trade-panel">
-				<label>Total: </label><span> 100 DAI </span>
-				<i class="fa-solid fa-spinner fa-spin"></i>
-			</div>
-			<div class="form-group">
-				<button role="button" name="sell" id="sell">
-				SELL
-				</button>
-			</div>
-		</fieldset>
-	</form>
+    <Trade></Trade>
   </section>
 </template>
 
 <script lang="ts">
+import { BondingCurveState } from "@/store/BondingCurveState";
 import { Options, Vue } from "vue-class-component";
+import { createStore, mapGetters } from "vuex";
 import Trade from "../components/Trade.vue";
+
 @Options({
   components: {
-    Trade,
+    Trade
   },
+  computed:{
+    ...mapGetters(['balance'])
+  }
 })
-export default class TradeView extends Vue {}
+export default class TradeView extends Vue { }
 </script>

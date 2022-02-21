@@ -1,3 +1,5 @@
+import { TokenADecimals } from "@/common/config";
+import { FixedNumber } from "ethers";
 import { createStore, Store } from "vuex";
 import {
   BondingCurveService,
@@ -23,7 +25,11 @@ export const TRADE_END = "tradeEnd";
 
 export default createStore<BondingCurveState>({
   state: InitialState,
-  getters: {}, // human readable formatting with ethers and big numbers
+  getters: {
+    balance (state) {
+     return FixedNumber.fromValue(state.balance, TokenADecimals).toString()
+    }
+  },
   mutations: {
     [FETCH_CURRENT_STATE_START](state) {
       state.fetchingData = true;
