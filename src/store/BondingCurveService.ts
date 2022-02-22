@@ -6,28 +6,27 @@ import {
 } from "@/common/config";
 import { BigNumber } from "ethers";
 
-export enum TradeDirection {
-  BUY,
-  SELL,
+export enum OrderType {
+  BUY = "BUY",
+  SELL = "SELL"
 }
 
 export interface CalculateParams {
-  direction: TradeDirection;
+  orderType: OrderType;
 }
 
 export interface CalculateResult {
-  amount: number;
-  direction: TradeDirection;
+  amount: BigNumber;
+  orderType: OrderType;
 }
 
 export interface FetchResult {
   balance: BigNumber;
-  buyPrice: BigNumber;
-  sellPrice: BigNumber;
+  price: BigNumber;
 }
 
 export interface TradeParams {
-  direction: TradeDirection;
+  orderType: OrderType;
   amount: BigNumber;
 }
 
@@ -53,16 +52,15 @@ export class BondingCurveService {
     // GET BUY PRICE
     // GET SELL PRICE
     return {
-      balance: BigNumber.from(0),
-      buyPrice: BigNumber.from(0),
-      sellPrice: BigNumber.from(0)
+      balance:  ethers.utils.parseEther("1.2345"),
+      price:  ethers.utils.parseEther("1.2345")
     };
   }
 
   public async calculate(params: CalculateParams): Promise<CalculateResult> {
     return {
-      amount: 10,
-      direction: params.direction,
+      amount: BigNumber.from(10),
+      orderType: params.orderType,
     };
   }
 

@@ -22,6 +22,10 @@ export default {
 
 <style>
 
+:root {
+  --page-width: 40em !important;
+}
+
 .components-grid {
   display: grid;
   grid-column-gap: 1.4em;
