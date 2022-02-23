@@ -1,6 +1,5 @@
 <template>
   <section>
-   
     <div class="terminal-nav">
       <div style="white-space: nowrap">
         <h1>APOCRYPH Bonding Curve Offering</h1>
@@ -36,16 +35,16 @@
   </section>
   <!-- eslint-disable-next-line -->
   <section>
-    <Trade :title="orderType"></Trade>
+    <Trade></Trade>
   </section>
 </template>
 
 <script lang="ts">
 import { SELECT_ORDER_TYPE } from "@/store";
 import { OrderType } from "@/store/BondingCurveService";
-import { BondingCurveState } from "@/store/BondingCurveState";
+import { InitialState } from "@/store/BondingCurveState";
 import { Options, Vue } from "vue-class-component";
-import { createStore, mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import Trade from "../components/Trade.vue";
 
 @Options({
@@ -53,13 +52,17 @@ import Trade from "../components/Trade.vue";
     Trade,
   },
   computed: {
-    ...mapGetters(["balance", "orderType"]),
+    ...mapState(['orderType']),
+    ...mapGetters(["balance"])
+  },
+  mounted() {
+    this.$store.dispatch(SELECT_ORDER_TYPE, InitialState.orderType);
   },
   methods: {
     setOrderType(orderType: OrderType) {
       this.$store.dispatch(SELECT_ORDER_TYPE, orderType);
-    },
-  },
+    }
+  }
 })
 export default class TradeView extends Vue {}
 </script>

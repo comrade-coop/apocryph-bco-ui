@@ -31,17 +31,14 @@ export default createStore<BondingCurveState>({
     balance (state): string {
      return FixedNumber.fromValue(state.balance, TokenADecimals).toString()
     },
-    orderType(state){
-      return state.orderType
-    },
     price(state){
       return FixedNumber.fromValue(state.price, TokenBDecimals).toString()
     },
-    amount(state){
-      return state.amount
-    },
     calculatedAmount(state){
       return FixedNumber.fromValue(state.calculatedAmount, TokenBDecimals).toString()
+    },
+    updating(state) {
+      return state.fetchingData || state.trading || state.calculatingAmount
     }
   },
   mutations: {
@@ -49,6 +46,7 @@ export default createStore<BondingCurveState>({
       state.orderType = orderType
       state.amount = 0
       state.calculatedAmount = BigNumber.from(0)
+      state.calculatingAmount = false
       state.fetchingData = false
       state.trading = false
     },
@@ -116,3 +114,9 @@ export default createStore<BondingCurveState>({
   },
   modules: {},
 });
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $store: Store<BondingCurveState>
+  }
+}

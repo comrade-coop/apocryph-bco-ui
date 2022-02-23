@@ -1,7 +1,7 @@
 <template>
-  <form>
+  <form @submit.prevent="trade">
     <fieldset>
-      <legend>{{ title }}</legend>
+      <legend>{{ orderType }}</legend>
 
       <div class="form-group">
         <div class="flex-container">
@@ -23,7 +23,9 @@
         <div class="flex-container">
           <div style="width: 80px">Amount:</div>
           <div style="width: 320px">
-            <input type="number" id="amount" name="amount" v-model="amount" />
+            <input type="number" id="amount" name="amount" 
+            v-model="amount" 
+            v-on:input="triggerCalculatingAmount"/>
           </div>
           <div>CRYPTH</div>
         </div>
@@ -46,19 +48,25 @@
       </div>
 
       <div class="form-group">
-        <br/>
-        <div class="flex-container" style="justify-content:  space-between !important;">
+        <br />
+        <div
+          class="flex-container"
+          style="justify-content: space-between !important"
+        >
           <div>
             <button
               class="btn btn-default btn-ghost"
               role="button"
               name="trade"
               id="trade"
+              @click="trade"
             >
-              {{ title }}
+              {{ orderType }}
             </button>
           </div>
-          <div><i class="fa-solid fa-spinner fa-spin"></i> updating...</div>
+          <div v-show="updating">
+            <i class="fa-solid fa-spinner fa-spin"></i> updating...
+          </div>
         </div>
       </div>
     </fieldset>
@@ -66,20 +74,48 @@
 </template>
 
 <script lang="ts">
+import { CALCUALTE_AMOUNT, TRADE } from "@/store";
 import { Options, Vue } from "vue-class-component";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
+import debounce from "lodash.debounce";
+import { BondingCurveState } from "@/store/BondingCurveState";
 
 @Options({
-  props: {
-    title: String,
+  data() {
+			return {
+        amount: 0
+      }
+  },
+  watch:{
+    orderType(oldValue, newValue){
+      this.amount = 0
+    }
   },
   computed: {
-    ...mapGetters(["amount", "calculatedAmount", "price"]),
+    ...mapState(['orderType']),
+    ...mapGetters(["calculatedAmount", "price", "updating"])
   },
+  methods: {
+    trade() {
+      this.$store.dispatch(TRADE, {
+        orderType: this.orderType,
+        amount: this.amount,
+      });
+    }
+  },
+  async created() {
+    this.triggerCalculatingAmount = debounce(async () => {
+      this.$store.dispatch(CALCUALTE_AMOUNT, {
+        orderType: this.orderType,
+        amount: this.amount
+      });
+    }, 1000);
+  }
 })
 export default class Trade extends Vue {
-  title!: string;
+  
 }
+
 </script>
 
 <style scoped lang="scss">
