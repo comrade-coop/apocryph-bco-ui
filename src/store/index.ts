@@ -1,4 +1,4 @@
-import { TokenADecimals, TokenBDecimals } from "@/common/config";
+import { ChainId, TokenADecimals, TokenBDecimals, Web3Provider } from "@/common/config";
 import { BigNumber, FixedNumber } from "ethers";
 import { createStore, Store } from "vuex";
 import {
@@ -13,15 +13,15 @@ import { BondingCurveState, InitialState } from "./BondingCurveState";
 // actions
 export const SELECT_ORDER_TYPE = "selectOrderType"
 export const FETCH_CURRENT_STATE = "fetchCurrentState"
-export const CALCUALTE_AMOUNT = "fetchCurrentState"
+export const CALCUALTE_AMOUNT = "calculateAmount"
 export const TRADE = "trade"
 
 // mutations
 export const ORDER_TYPE_SELECTED = "orderTypeSelected"
 export const FETCH_CURRENT_STATE_STARTED = "fetchCurrentStateStarted"
 export const FETCH_CURRENT_STATE_ENDEDED = "fetchCurrentStateEnded"
-export const CALCUALTE_AMOUNT_STARTED = "fetchCurrentStateStarted"
-export const CALCUALTE_AMOUNT_ENDED = "fetchCurrentStateEnded"
+export const CALCUALTE_AMOUNT_STARTED = "calculateAmountStarted"
+export const CALCUALTE_AMOUNT_ENDED = "calculateAmountEnded"
 export const TRADE_STARTED = "tradeStarted"
 export const TRADE_ENDED = "tradeEnded"
 
@@ -32,7 +32,12 @@ export default createStore<BondingCurveState>({
      return FixedNumber.fromValue(state.balance, TokenADecimals).toString()
     },
     price(state){
-      return FixedNumber.fromValue(state.price, TokenBDecimals).toString()
+      if (state.orderType == OrderType.BUY) {
+        return FixedNumber.fromValue(state.buyPrice, TokenBDecimals).toString()
+      }
+
+      return FixedNumber.fromValue(state.sellPrice, TokenBDecimals).toString()
+      
     },
     calculatedAmount(state){
       return FixedNumber.fromValue(state.calculatedAmount, TokenBDecimals).toString()
@@ -44,7 +49,6 @@ export default createStore<BondingCurveState>({
   mutations: {
     [ORDER_TYPE_SELECTED](state, orderType: OrderType) {
       state.orderType = orderType
-      state.amount = 0
       state.calculatedAmount = BigNumber.from(0)
       state.calculatingAmount = false
       state.fetchingData = false
@@ -55,7 +59,8 @@ export default createStore<BondingCurveState>({
     },
     [FETCH_CURRENT_STATE_ENDEDED](state: BondingCurveState, result: FetchResult) {
       state.balance = result.balance;
-      state.price = result.price;
+      state.buyPrice = result.buyPrice;
+      state.sellPrice = result.sellPrice;
       state.fetchingData = false;
     },
     [CALCUALTE_AMOUNT_STARTED](state: BondingCurveState) {
@@ -64,14 +69,13 @@ export default createStore<BondingCurveState>({
     },
     [CALCUALTE_AMOUNT_ENDED](state: BondingCurveState, result: CalculateResult) {
       state.calculatingAmount = false;
-      state.calculatedAmount = result.amount;
+      state.calculatedAmount = result.totalAmount;
     },
     [TRADE_STARTED](state: BondingCurveState) {
       state.trading = true;
     },
     [TRADE_ENDED](state: BondingCurveState) {
       state.trading = false;
-      state.amount = 0;
     },
   },
   actions: {
@@ -97,7 +101,7 @@ export default createStore<BondingCurveState>({
           commit(CALCUALTE_AMOUNT_ENDED, calculateResult);
         })
         .catch((error) => {
-          throw new Error(error);
+          //throw new Error(error);
         });
     },
     [TRADE]({ commit }, params: TradeParams) {

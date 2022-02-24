@@ -11,5 +11,6 @@ declare global {
 }
 
 export const Web3Provider = window.ethereum
+export const ChainId = 77
 export const TokenADecimals = 10
-export const TokenBDecimals = 18
+export const TokenBDecimals = 0

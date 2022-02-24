@@ -1,5 +1,18 @@
 <template>
-  <section>
+  <section v-if="!show">
+    <div class="terminal-nav">
+      <div style="white-space: nowrap">
+        <h1>APOCRYPH Bonding Curve Offering</h1>
+      </div>
+    </div>
+  </section>
+  <section v-if="!show">
+    <div class="terminal-alert terminal-alert-error">
+      Please login with metamask, select POLYGON network and reload the page
+    </div>
+  </section>
+
+  <section v-if="show">
     <div class="terminal-nav">
       <div style="white-space: nowrap">
         <h1>APOCRYPH Bonding Curve Offering</h1>
@@ -34,13 +47,13 @@
     <br />
   </section>
   <!-- eslint-disable-next-line -->
-  <section>
+  <section v-if="show">
     <Trade></Trade>
   </section>
 </template>
 
 <script lang="ts">
-import { SELECT_ORDER_TYPE } from "@/store";
+import { FETCH_CURRENT_STATE, SELECT_ORDER_TYPE } from "@/store";
 import { OrderType } from "@/store/BondingCurveService";
 import { InitialState } from "@/store/BondingCurveState";
 import { Options, Vue } from "vue-class-component";
@@ -52,17 +65,24 @@ import Trade from "../components/Trade.vue";
     Trade,
   },
   computed: {
-    ...mapState(['orderType']),
-    ...mapGetters(["balance"])
+    ...mapState(["orderType"]),
+    ...mapGetters(["balance"]),
+    show() {
+      return window.ethereum && window.ethereum.selectedAddress !== null && window.ethereum.networkVersion == "77";
+    },
   },
   mounted() {
-    this.$store.dispatch(SELECT_ORDER_TYPE, InitialState.orderType);
+    if (window.ethereum && window.ethereum.selectedAddress !== null && window.ethereum.networkVersion == "77") {
+      this.$store.dispatch(SELECT_ORDER_TYPE, InitialState.orderType);
+      this.$store.dispatch(FETCH_CURRENT_STATE);
+    }
   },
   methods: {
     setOrderType(orderType: OrderType) {
       this.$store.dispatch(SELECT_ORDER_TYPE, orderType);
-    }
-  }
+      this.$store.dispatch(FETCH_CURRENT_STATE);
+    },
+  },
 })
 export default class TradeView extends Vue {}
 </script>

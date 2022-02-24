@@ -1,10 +1,10 @@
-import * as ethers from "ethers";
+import * as ethers from "ethers"
 import {
   Web3Provider,
   BondingCurveAddress,
   BondingCurveAbi,
-} from "@/common/config";
-import { BigNumber } from "ethers";
+} from "@/common/config"
+import { BigNumber } from "ethers"
 
 export enum OrderType {
   BUY = "BUY",
@@ -12,26 +12,27 @@ export enum OrderType {
 }
 
 export interface CalculateParams {
-  orderType: OrderType;
+  orderType: OrderType
+  amount: BigNumber
 }
 
 export interface CalculateResult {
-  amount: BigNumber;
-  orderType: OrderType;
+  totalAmount: BigNumber
 }
 
 export interface FetchResult {
-  balance: BigNumber;
-  price: BigNumber;
+  balance: BigNumber
+  sellPrice: BigNumber
+  buyPrice: BigNumber
 }
 
 export interface TradeParams {
-  orderType: OrderType;
-  amount: BigNumber;
+  orderType: OrderType
+  amount: BigNumber
 }
 
 export class BondingCurveService {
-  Contract: any;
+  Contract: any
 
   constructor() {
     const provider = new ethers.providers.Web3Provider(Web3Provider, "any");
@@ -42,26 +43,35 @@ export class BondingCurveService {
         BondingCurveAddress,
         BondingCurveAbi,
         signer
-      );
+      )
     }
   }
 
   public async fetch(): Promise<FetchResult> {
-    // const balance = await this.Contract.balanceA();
-    // let balanceStr = ethers.FixedNumber.fromValue(balance, 10).toString();
-    // GET BUY PRICE
-    // GET SELL PRICE
+    const balance = await this.Contract.balanceA()
+    const sellPrice = await this.Contract.getSellPrice(1)
+    const buyPrice = await this.Contract.getBuyPrice(1)
+    
     return {
-      balance:  ethers.utils.parseEther("1.2345"),
-      price:  ethers.utils.parseEther("1.2345")
-    };
+      balance: balance,
+      sellPrice:  sellPrice,
+      buyPrice: buyPrice
+    }
   }
 
   public async calculate(params: CalculateParams): Promise<CalculateResult> {
+    
+    if (params.orderType == OrderType.BUY) {
+      const totalAmount = await this.Contract.getBuyPrice(params.amount);
+      return {
+        totalAmount: totalAmount
+      }
+    }
+    
+    const totalAmount = await this.Contract.getSellPrice(params.amount);
     return {
-      amount: BigNumber.from(10),
-      orderType: params.orderType,
-    };
+      totalAmount: totalAmount
+    }
   }
 
   // eslint-disable-next-line

@@ -10,18 +10,13 @@
 </template>
 
 <script>
+import * as ethers from "ethers";
 export default {
-  name: "App",
-  async created() {
-    if (!window.ethereum) {
-      alert("Please install MetaMask browser extension");
-    }
-  },
+  name: "App"
 };
 </script>
 
 <style>
-
 :root {
   --page-width: 40em !important;
 }

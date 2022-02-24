@@ -3,8 +3,8 @@ import { OrderType } from "./BondingCurveService";
 
 export interface BondingCurveState {
   balance: BigNumber;
-  price: BigNumber;
-  amount: number;
+  sellPrice: BigNumber;
+  buyPrice: BigNumber;
   fetchingData: boolean;
   calculatingAmount: boolean;
   calculatedAmount: BigNumber;
@@ -13,9 +13,9 @@ export interface BondingCurveState {
 }
 
 export const InitialState: BondingCurveState = {
-  balance:  ethers.utils.parseEther("500000000"),
-  price:  ethers.utils.parseEther("0.03"),
-  amount: 0,
+  balance:  ethers.utils.parseEther("1"),
+  sellPrice:  ethers.utils.parseEther("1"),
+  buyPrice:  ethers.utils.parseEther("1"),
   fetchingData: false,
   calculatingAmount: false,
   calculatedAmount:  BigNumber.from(0),

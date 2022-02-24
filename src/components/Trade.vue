@@ -1,4 +1,9 @@
 <template>
+
+  <p v-if="show">
+    DUPAA
+  </p>
+
   <form @submit.prevent="trade">
     <fieldset>
       <legend>{{ orderType }}</legend>
@@ -23,9 +28,13 @@
         <div class="flex-container">
           <div style="width: 80px">Amount:</div>
           <div style="width: 320px">
-            <input type="number" id="amount" name="amount" 
-            v-model="amount" 
-            v-on:input="triggerCalculatingAmount"/>
+            <input
+              type="number"
+              id="amount"
+              name="amount"
+              v-model="amount"
+              v-on:input="triggerCalculatingAmount"
+            />
           </div>
           <div>CRYPTH</div>
         </div>
@@ -78,21 +87,20 @@ import { CALCUALTE_AMOUNT, TRADE } from "@/store";
 import { Options, Vue } from "vue-class-component";
 import { mapGetters, mapState } from "vuex";
 import debounce from "lodash.debounce";
-import { BondingCurveState } from "@/store/BondingCurveState";
 
 @Options({
   data() {
-			return {
-        amount: 0
-      }
+    return {
+      amount: 0,
+    };
   },
-  watch:{
-    orderType(oldValue, newValue){
-      this.amount = 0
-    }
+  watch: {
+    orderType(oldValue, newValue) {
+      this.amount = 0;
+    },
   },
   computed: {
-    ...mapState(['orderType']),
+    ...mapState(["orderType"]),
     ...mapGetters(["calculatedAmount", "price", "updating"])
   },
   methods: {
@@ -101,21 +109,18 @@ import { BondingCurveState } from "@/store/BondingCurveState";
         orderType: this.orderType,
         amount: this.amount,
       });
-    }
+    },
   },
   async created() {
     this.triggerCalculatingAmount = debounce(async () => {
       this.$store.dispatch(CALCUALTE_AMOUNT, {
-        orderType: this.orderType,
-        amount: this.amount
-      });
+          orderType: this.orderType,
+          amount: this.amount,
+        });
     }, 1000);
-  }
+  },
 })
-export default class Trade extends Vue {
-  
-}
-
+export default class Trade extends Vue {}
 </script>
 
 <style scoped lang="scss">
